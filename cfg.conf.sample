@@ -1,0 +1,10 @@
+# sample cfg configuration file
+
+# 1st flash partition to use for storage
+DEV1=/dev/mtd1
+
+# 2nd flash partition to use for storage
+DEV2=/dev/mtd2
+
+# directory to save
+DIR=/etc
