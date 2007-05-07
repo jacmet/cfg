@@ -1,5 +1,5 @@
-bin_PROGRAMS = cfg-helper
-bin_SCRIPTS = cfg
+sbin_PROGRAMS = cfg-helper
+sbin_SCRIPTS = cfg
 noinst_HEADERS = mtd-abi.h mtd-user.h
 EXTRA_DIST = cfg.in
 CLEANFILES = $(bin_SCRIPTS)
