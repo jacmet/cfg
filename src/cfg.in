@@ -2,16 +2,17 @@
 # cfg - configuration data storage
 # (C) 2007 Peter Korsgaard <jacmet@sunsite.dk>
 
-DEV1=/dev/mtd10
-DEV2=/dev/mtd11
-DIR=/etc
-HELPER=/sbin/cfg.helper
+CONF=#SYSCONF#/cfg.conf
+HELPER=#PREFIX#/bin/cfg-helper
 HEADERSIZE=16
+
+# defaults
+DIR=#SYSCONF#
 
 # return version, next and current device in $VER, $DEV and $CUR
 get_dev_version()
 {
-	VER1=$($HELPER $DEV1 getversion)
+	VER1=$($HELPER $DEV1 ge7tversion)
 	VER2=$($HELPER $DEV2 getversion)
 
 	if [ "$VER1" -gt "$VER2" ];
@@ -84,7 +85,41 @@ erase()
 	setup
 }
 
-# main
+########
+# main #
+########
+
+# error checking
+if [ -e $CONF ];
+then
+    source $CONF
+else
+    echo "Error reading $CONF, aborting!" 1>&2
+    exit 10
+fi
+
+if [ ! -e $DEV1 ];
+then
+    echo "Error accessing $DEV1, aborting!" 1>&2
+    exit 11
+fi
+
+# use DEV1 for both devices if not given
+DEV2=${DEV2-$DEV1}
+
+if [ ! -e $DEV2 ];
+then
+    echo "Error accessing $DEV2, aborting!" 1>&2
+    exit 12
+fi
+
+if [ ! -e $DIR ];
+then
+    echo "Error accessing backup directory $DIR, aborting!" 1>&2
+    exit 13
+fi
+
+# cmdline parsing
 case "$1" in
 	erase)
 		erase || exit $?
