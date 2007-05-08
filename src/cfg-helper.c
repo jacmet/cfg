@@ -20,7 +20,7 @@ struct cfg_head
 static void usage(int exitval, char *msg)
 {
 	fprintf(stderr, "%s\n", msg);
-	fprintf(stderr, "cfg.helper /dev/mtdX <cmd> [<args>]\n");
+	fprintf(stderr, "cfg-helper /dev/mtdX <cmd> [<args>]\n");
 	fprintf(stderr, "Where <cmd> is:\n");
 	fprintf(stderr, "\terase\t\t\tErase device\n");
 	fprintf(stderr, "\tgetversion\t\tGet version\n");
