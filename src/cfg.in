@@ -3,7 +3,7 @@
 # (C) 2007 Peter Korsgaard <jacmet@sunsite.dk>
 
 CONF=#SYSCONF#/cfg.conf
-HELPER=#PREFIX#/bin/cfg-helper
+HELPER=#PREFIX#/sbin/cfg-helper
 HEADERSIZE=16
 
 # defaults
