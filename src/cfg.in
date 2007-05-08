@@ -12,7 +12,7 @@ DIR=#SYSCONF#
 # return version, next and current device in $VER, $DEV and $CUR
 get_dev_version()
 {
-	VER1=$($HELPER $DEV1 ge7tversion)
+	VER1=$($HELPER $DEV1 getversion)
 	VER2=$($HELPER $DEV2 getversion)
 
 	if [ "$VER1" -gt "$VER2" ];
