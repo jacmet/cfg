@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "mtd-user.h"
+#include <mtd/mtd-user.h>
 
 struct cfg_head
 {
