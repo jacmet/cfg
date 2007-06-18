@@ -62,6 +62,9 @@ setup()
 	# remove mounts if necessary
 	umount $DIR 2>/dev/null || true
 
+	# remount static contents somewhere else so it's still accessible
+	[ -d $MOUNTPOINT ] && mount --bind $DIR $MOUNTPOINT
+
 	get_dev_version
 	# no data in flash?
 	if [ "$VER" -eq "0" ];

@@ -1,3 +1,8 @@
+2007-06-18  Peter Korsgaard  <jacmet@sunsite.dk>
+
+	* src/cfg.in (setup): Support remounting underlying static
+	contents somewhere else.
+
 2007-05-07  Peter Korsgaard  <jacmet@sunsite.dk>
 
 	* Initial autoconf setup

@@ -4,7 +4,12 @@
 DEV1=/dev/mtd1
 
 # 2nd flash partition to use for storage
+# Leave undefined if failsafe not needed
 DEV2=/dev/mtd2
 
 # directory to save
 DIR=/etc
+
+# mountpoint to remount underlying static contents at
+# Leave undefined if not needed
+MOUNTPOINT=/mnt/rom-etc
