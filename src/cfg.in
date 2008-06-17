@@ -62,20 +62,29 @@ setup()
 	# remove mounts if necessary
 	umount $DIR 2>/dev/null || true
 
+	mp=${MOUNTPOINT:-$(mktemp -d /tmp/cfg.XXXXXX)}
+
 	# remount static contents somewhere else so it's still accessible
-	[ -d $MOUNTPOINT ] && mount --bind $DIR $MOUNTPOINT
+	mount --bind $DIR $mp
+
+	# setup tmpfs
+	mount -t tmpfs tmpfs $DIR || return 3
 
 	get_dev_version
 	# no data in flash?
 	if [ "$VER" -eq "0" ];
 	then
-		echo "No data in flash, storing initial version"
-		# commit contents of static data
+		# copy static contents
+		tar c -C $mp .|tar x -C $DIR
+		# run handler
+		on_setup $DIR $MOUNTPOINT || return $?
+		cd /
 		commit || return $?
 		CUR=$DEV # make sure we load the new data
 	fi
-	# setup tmpfs
-	mount -t tmpfs tmpfs $DIR || return 3
+
+	# remove temp bind mount
+	[ -d $MOUNTPOINT ] || umount $mp
 
 	load $CUR || return $?
 }
@@ -86,6 +95,12 @@ erase()
 	$HELPER $DEV1 erase || return 2
 	$HELPER $DEV2 erase || return 3
 	setup
+}
+
+on_setup() {
+	# $1 = DIR
+	# $2 = MOUNTPOINT (optional)
+	echo "No data in flash, storing initial version"
 }
 
 ########
