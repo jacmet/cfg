@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(cfg,0.0.2,jacmet@sunsite.dk)
+AC_INIT(cfg,0.0.3,jacmet@sunsite.dk)
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
