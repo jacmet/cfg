@@ -13,3 +13,13 @@ DIR=/etc
 # mountpoint to remount underlying static contents at
 # Leave undefined if not needed
 MOUNTPOINT=/mnt/rom-etc
+
+# setup handler - This is called when cfg doesn't detect a valid cfg
+# image in flash. It is called after the contents of $DIR is copied to
+# the ram disk, and can be used to modify the content before it is
+# written to flash (E.G. replace files with symlinks to their static
+# counter parts)
+on_setup() {
+	   # $1 = DIR, $2 = MOUNTPOINT
+	   echo Fixing up files
+}

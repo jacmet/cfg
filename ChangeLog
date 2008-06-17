@@ -1,3 +1,8 @@
+2008-06-17  Peter Korsgaard  <jacmet@sunsite.dk>
+
+	* cfg.conf.sample:
+	* src/cfg.in (setup): Support platform specific on_setup handler.
+
 2007-06-18  Peter Korsgaard  <jacmet@sunsite.dk>
 
 	* src/cfg.in (setup): Support remounting underlying static

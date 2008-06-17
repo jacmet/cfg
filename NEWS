@@ -1,3 +1,8 @@
+0.0.3 Release
+=============
+
+ * Support platform specific on_setup handler.
+
 0.0.2 Release
 =============
 
