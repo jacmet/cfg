@@ -1,0 +1,116 @@
+#!/bin/sh
+# cfg - configuration data storage
+# (C) 2007 Peter Korsgaard <jacmet@sunsite.dk>
+
+DEV1=/dev/mtd10
+DEV2=/dev/mtd11
+DIR=/etc
+HELPER=/sbin/cfg.helper
+HEADERSIZE=16
+
+# return version, next and current device in $VER, $DEV and $CUR
+get_dev_version()
+{
+	VER1=$($HELPER $DEV1 getversion)
+	VER2=$($HELPER $DEV2 getversion)
+
+	if [ "$VER1" -gt "$VER2" ];
+	then
+		VER=$VER1
+		DEV=$DEV2
+		CUR=$DEV1
+	else
+		VER=$VER2
+		DEV=$DEV1
+		CUR=$DEV2
+	fi
+
+	return 0
+}
+
+# commit change
+commit()
+{
+	get_dev_version
+	VER=$(( $VER + 1 ))
+
+	FILE=$(mktemp /tmp/cfg.XXXXXX)
+	tar czf $FILE -C $DIR . || return 2
+	$HELPER $DEV erase || return 3
+	dd if=$FILE of=$DEV bs=$HEADERSIZE seek=1 2>/dev/null || return 4
+	$HELPER $DEV setversion $VER || return 5
+	rm -f $FILE
+	echo Data stored to $DEV as version $VER
+}
+
+# load data from device
+load()
+{
+	DEV=$1
+
+	umount $DIR || return 3
+	mount -t tmpfs tmpfs $DIR || return 4
+
+	dd if=$DEV bs=$HEADERSIZE skip=1 2>/dev/null | \
+	   tar zxf - -C $DIR || return 2
+}
+
+# setup tmpfs and poulate it
+setup()
+{
+	# remove mounts if necessary
+	umount $DIR 2>/dev/null || true
+
+	get_dev_version
+	# no data in flash?
+	if [ "$VER" -eq "0" ];
+	then
+		echo "No data in flash, storing initial version"
+		# commit contents of static data
+		commit || return $?
+		CUR=$DEV # make sure we load the new data
+	fi
+	# setup tmpfs
+	mount -t tmpfs tmpfs $DIR || return 3
+
+	load $CUR || return $?
+}
+
+# erase data and revert to factory defaults
+erase()
+{
+	$HELPER $DEV1 erase || return 2
+	$HELPER $DEV2 erase || return 3
+	setup
+}
+
+# main
+case "$1" in
+	erase)
+		erase || exit $?
+		;;
+	commit)
+		commit || exit $?
+		;;
+	version)
+		get_dev_version
+		echo "Version: $VER, Device: $CUR"
+		;;
+	setup)
+		get_dev_version
+		setup || exit $?
+		;;
+	revert)
+		get_dev_version
+		load $CUR || exit $?
+		;;
+
+	prev)
+		get_dev_version
+		load $DEV || exit $?
+		;;
+	*)
+		echo "Usage: $0 {commit|version|setup|revert|prev|erase}" >&2
+		exit 1
+		;;
+esac
