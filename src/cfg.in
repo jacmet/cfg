@@ -94,7 +94,6 @@ erase()
 {
 	$HELPER $DEV1 erase || return 2
 	$HELPER $DEV2 erase || return 3
-	setup
 }
 
 on_setup() {
