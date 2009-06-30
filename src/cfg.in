@@ -1,6 +1,6 @@
 #!/bin/sh
 # cfg - configuration data storage
-# (C) 2007 Peter Korsgaard <jacmet@sunsite.dk>
+# (C) 2007-2009 Peter Korsgaard <jacmet@sunsite.dk>
 
 CONF=#SYSCONF#/cfg.conf
 HELPER=#PREFIX#/sbin/cfg-helper
