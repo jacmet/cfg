@@ -70,7 +70,6 @@ setup()
 	# setup tmpfs
 	mount -t tmpfs tmpfs $DIR || return 3
 
-	get_dev_version
 	# no data in flash?
 	if [ "$VER" -eq "0" ];
 	then
@@ -156,7 +155,6 @@ case "$1" in
 		get_dev_version
 		load $CUR || exit $?
 		;;
-
 	prev)
 		get_dev_version
 		load $DEV || exit $?
