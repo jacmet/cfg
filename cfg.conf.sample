@@ -11,7 +11,6 @@ DEV2=/dev/mtd2
 DIR=/etc
 
 # mountpoint to remount underlying static contents at
-# Leave undefined if not needed
 MOUNTPOINT=/mnt/rom-etc
 
 # setup handler - This is called when cfg doesn't detect a valid cfg
@@ -23,3 +22,7 @@ on_setup() {
 	   # $1 = DIR, $2 = MOUNTPOINT
 	   echo Fixing up files
 }
+
+# list of files/directories to save. Is passed to the shell, so wildcards
+# are allowed
+SAVE='network/interfaces'

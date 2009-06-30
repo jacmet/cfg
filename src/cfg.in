@@ -36,7 +36,8 @@ commit()
 	VER=$(( $VER + 1 ))
 
 	FILE=$(mktemp /tmp/cfg.XXXXXX)
-	tar czf $FILE -C $DIR . || return 2
+	cd $DIR
+	tar zcf $FILE .cfg.info $SAVE || return 2
 	$HELPER $DEV erase || return 3
 	dd if=$FILE of=$DEV bs=$HEADERSIZE seek=1 2>/dev/null || return 4
 	$HELPER $DEV setversion $VER || return 5
@@ -44,13 +45,25 @@ commit()
 	echo Data stored to $DEV as version $VER
 }
 
+# common startup routine for setup() and load()
+init()
+{
+	# remove mounts if necessary
+	umount $DIR 2>/dev/null || true
+
+	# setup tmpfs
+	mount -t tmpfs tmpfs $DIR || return 3
+
+	# populate it with symlinks to the static files
+	cp -rs $MOUNTPOINT/.* $MOUNTPOINT/* $DIR/
+}
+
 # load data from device
 load()
 {
 	DEV=$1
 
-	umount $DIR || return 3
-	mount -t tmpfs tmpfs $DIR || return 4
+	init
 
 	dd if=$DEV bs=$HEADERSIZE skip=1 2>/dev/null | \
 	   tar zxf - -C $DIR || return 2
@@ -59,31 +72,28 @@ load()
 # setup tmpfs and poulate it
 setup()
 {
-	# remove mounts if necessary
-	umount $DIR 2>/dev/null || true
-
-	mp=${MOUNTPOINT:-$(mktemp -d /tmp/cfg.XXXXXX)}
-
 	# remount static contents somewhere else so it's still accessible
-	mount --bind $DIR $mp
+	mount --bind $DIR $MOUNTPOINT
 
-	# setup tmpfs
-	mount -t tmpfs tmpfs $DIR || return 3
+	init
+
+	touch $DIR/.cfg.info
 
 	# no data in flash?
 	if [ "$VER" -eq "0" ];
 	then
-		# copy static contents
-		tar c -C $mp .|tar x -C $DIR
+		cd $MOUNTPOINT
+		# replace affected symlinks with real files
+		for f in $SAVE;
+		do
+		    cp -f $f $DIR/$f
+		done
 		# run handler
-		on_setup $DIR $mp || return $?
+		on_setup $DIR $MOUNTPOINT || return $?
 		cd /
 		commit || return $?
 		CUR=$DEV # make sure we load the new data
 	fi
-
-	# remove temp bind mount
-	[ -d $MOUNTPOINT ] || umount $mp
 
 	load $CUR || return $?
 }
@@ -133,6 +143,18 @@ if [ ! -e $DIR ];
 then
     echo "Error accessing backup directory $DIR, aborting!" 1>&2
     exit 13
+fi
+
+if [ ! -e $MOUNTPOINT ];
+then
+    echo "Error accessing remount directory $MOUNTPOINT, aborting!" 1>&2
+    exit 14
+fi
+
+if [ -z "$SAVE" ];
+then
+    echo "No non-volatile files defined. Set SAVE variable in $CONF!" 1>&2
+    exit 15
 fi
 
 # cmdline parsing
