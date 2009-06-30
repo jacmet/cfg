@@ -76,7 +76,7 @@ setup()
 		# copy static contents
 		tar c -C $mp .|tar x -C $DIR
 		# run handler
-		on_setup $DIR $MOUNTPOINT || return $?
+		on_setup $DIR $mp || return $?
 		cd /
 		commit || return $?
 		CUR=$DEV # make sure we load the new data
