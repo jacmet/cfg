@@ -1,3 +1,19 @@
+0.0.4 Release
+=============
+
+ * Invert save logic, so only files explicitly defined in the
+   configuration file are saved in the flash instead of the entire
+   directory.  This makes it easier to handle the situations where
+   only a limited number of files needs to be saved, and where the
+   base (read-only) directory structure might evolve over time.
+
+   The flash format is backwards compatible, but there's two
+   user-visible changes to the configuration file:
+
+     - The MOUNTPOINT setting is no longer optional
+     - The SAVE setting has to be set to the list of file names to save
+       (shell wildcards are allowed)
+
 0.0.3 Release
 =============
 
