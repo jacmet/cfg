@@ -55,7 +55,7 @@ init()
 	mount -t tmpfs tmpfs $DIR || return 3
 
 	# populate it with symlinks to the static files
-	cp -rs $MOUNTPOINT/.* $MOUNTPOINT/* $DIR/
+	cp -rs $MOUNTPOINT/. $DIR/
 }
 
 # load data from device
