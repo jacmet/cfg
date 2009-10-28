@@ -1,3 +1,13 @@
+0.0.5 Release
+=============
+
+ * Add cfgd daemon, which listens to file modifications through
+   inotify and runs cfg commit after a specified timeout.
+   Related to this, cfg now has a force subcommand, to tell the daemon
+   to do a commit now (alternatively you can send a -SIGHUP to it).
+
+ * Work around shell globbing issue with symlink generation on startup.
+
 0.0.4 Release
 =============
 

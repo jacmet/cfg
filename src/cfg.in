@@ -165,6 +165,12 @@ case "$1" in
 	commit)
 		commit || exit $?
 		;;
+
+	force)
+		# trigger daemon to commit
+		killall -hup cfgd || exit $?
+		;;
+
 	version)
 		get_dev_version
 		echo "Version: $VER, Device: $CUR"
@@ -181,8 +187,9 @@ case "$1" in
 		get_dev_version
 		load $DEV || exit $?
 		;;
+
 	*)
-		echo "Usage: $0 {commit|version|setup|revert|prev|erase}" >&2
+		echo "Usage: $0 {commit|force|version|setup|revert|prev|erase}" >&2
 		exit 1
 		;;
 esac

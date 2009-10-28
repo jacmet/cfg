@@ -1,4 +1,4 @@
-sbin_PROGRAMS = cfg-helper
+sbin_PROGRAMS = cfg-helper cfgd
 sbin_SCRIPTS = cfg
 EXTRA_DIST = cfg.in
 CLEANFILES = $(sbin_SCRIPTS)
