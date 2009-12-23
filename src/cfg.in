@@ -37,7 +37,20 @@ commit()
 
 	FILE=$(mktemp /tmp/cfg.XXXXXX)
 	cd $DIR
-	tar zcf $FILE .cfg.info $SAVE || return 2
+	# only save changed files
+	if ! which cmp >/dev/null;
+	then
+	    echo "Warning, cmp needed to only save changed files" >&2
+	fi
+	_SAVE=''
+	for i in $SAVE;
+	do
+		if ! cmp -s $i $MOUNTPOINT/$i 2>/dev/null;
+		then
+			_SAVE="$_SAVE $i"
+		fi
+	done
+	tar zcf $FILE .cfg.info $_SAVE || return 2
 	$HELPER $DEV erase || return 3
 	dd if=$FILE of=$DEV bs=$HEADERSIZE seek=1 2>/dev/null || return 4
 	$HELPER $DEV setversion $VER || return 5

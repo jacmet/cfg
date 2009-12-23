@@ -7,6 +7,9 @@
    Now files listed in SAVE will be copied so cfg commit does the
    right thing.
 
+ * Only save files that are actually changed (E.G. different from
+   underlying static contents). This needs 'cmp' in the file system.
+
 0.0.5 Release
 =============
 
