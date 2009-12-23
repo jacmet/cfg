@@ -56,6 +56,15 @@ init()
 
 	# populate it with symlinks to the static files
 	cp -rs $MOUNTPOINT/. $DIR/
+
+	cd $MOUNTPOINT
+	# replace affected symlinks with real files
+	for f in $SAVE;
+	do
+		cp -f $f $DIR/$f
+	done
+
+	touch $DIR/.cfg.info
 }
 
 # load data from device
@@ -75,19 +84,10 @@ setup()
 	# remount static contents somewhere else so it's still accessible
 	mount --bind $DIR $MOUNTPOINT
 
-	init
-
-	touch $DIR/.cfg.info
-
 	# no data in flash?
 	if [ "$VER" -eq "0" ];
 	then
-		cd $MOUNTPOINT
-		# replace affected symlinks with real files
-		for f in $SAVE;
-		do
-		    cp -f $f $DIR/$f
-		done
+		init
 		# run handler
 		on_setup $DIR $MOUNTPOINT || return $?
 		cd /

@@ -1,3 +1,12 @@
+0.0.6 Release
+=============
+
+ * Ensure new files to be saved are stored as real files and not
+   symlinks. E.G. we used to replace all files in the RAM disk with
+   symlinks to $MOUNTPOUNT/<file> for space / version considerations.
+   Now files listed in SAVE will be copied so cfg commit does the
+   right thing.
+
 0.0.5 Release
 =============
 
